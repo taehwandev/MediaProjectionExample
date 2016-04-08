@@ -1,5 +1,4 @@
-# PlayPauseButton
-[![Release](https://img.shields.io/github/release/recruit-lifestyle/PlayPauseButton.svg?label=maven version)](https://github.com/recruit-lifestyle/PlayPauseButton)
+# MediaProjectionExample
 [![License](https://img.shields.io/hexpm/l/plug.svg)]()
 
 ## Requirements
