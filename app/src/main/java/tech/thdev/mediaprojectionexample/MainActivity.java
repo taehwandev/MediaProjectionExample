@@ -89,9 +89,15 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
 
         // Unbind from the service
-        if (isBound) {
-            unbindService(serviceConnection);
-            isBound = false;
+        try {
+            if (isBound) {
+                unbindService(serviceConnection);
+                isBound = false;
+            }
+        } catch (IllegalArgumentException e) {
+            // Do noting...
+
+            // Example Exception.
         }
     }
 
