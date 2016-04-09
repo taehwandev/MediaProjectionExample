@@ -2,8 +2,8 @@
 [![License](https://img.shields.io/hexpm/l/plug.svg)]()
 
 ## Requirements
-Target Sdk Version : 23
-Min Sdk Version : 21
+- Target Sdk Version : 23
+- Min Sdk Version : 21
 
 ## API
 - [PlayPauseButton](https://github.com/recruit-lifestyle/PlayPauseButton)
