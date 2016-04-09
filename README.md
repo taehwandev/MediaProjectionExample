@@ -5,7 +5,7 @@
 Target Sdk Version : 23
 Min Sdk Version : 21
 
-# API
+## API
 - [PlayPauseButton](https://github.com/recruit-lifestyle/PlayPauseButton)
 - [ButterKnife](http://jakewharton.github.io/butterknife/)
 
