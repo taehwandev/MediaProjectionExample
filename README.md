@@ -12,6 +12,8 @@
 - [PlayPauseButton](https://github.com/recruit-lifestyle/PlayPauseButton)
 - [ButterKnife](http://jakewharton.github.io/butterknife/)
 - [MediaProjection](http://developer.android.com/reference/android/media/projection/package-summary.html)
+- [TextureView](http://developer.android.com/reference/android/view/TextureView.html)
+- [SurfaceView](http://developer.android.com/reference/android/view/SurfaceView.html)
 
 
 ## Use API License
