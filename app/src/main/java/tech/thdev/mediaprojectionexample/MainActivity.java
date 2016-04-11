@@ -101,7 +101,7 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    @OnClick(R.id.btn_start_media_projection)
+    @OnClick(R.id.btn_start_media_projection_service)
     public void onClickStartMediaProjection(View view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
             // User rights acquired
@@ -111,6 +111,11 @@ public class MainActivity extends BaseActivity {
         } else {
             startVideoViewService();
         }
+    }
+
+    @OnClick(R.id.btn_start_media_projection_activity)
+    public void onClickStartMediaProjectionActivity(View view) {
+        startActivity(new Intent(this, MediaProjectionActivity.class));
     }
 
     @Override

@@ -13,8 +13,15 @@
     tools:showIn="@layout/activity_main">
 
     <Button
-        android:id="@+id/btn_start_media_projection"
+        android:id="@+id/btn_start_media_projection_service"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/start_media_projection" />
+        android:text="@string/start_media_projection_service" />
+
+    <Button
+        android:id="@+id/btn_start_media_projection_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_start_media_projection_service"
+        android:text="@string/start_media_projection_activity" />
 </RelativeLayout>
