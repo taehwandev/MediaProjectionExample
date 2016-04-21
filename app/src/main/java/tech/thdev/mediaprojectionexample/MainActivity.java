@@ -14,7 +14,6 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,10 +21,16 @@ import android.view.View;
 import butterknife.Bind;
 import butterknife.OnClick;
 import tech.thdev.mediaprojectionexample.base.BaseActivity;
-import tech.thdev.mediaprojectionexample.listener.IVideoViewListener;
+import tech.thdev.mediaprojectionexample.presenter.view.MediaProjectionView;
 import tech.thdev.mediaprojectionexample.service.VideoViewService;
+import tech.thdev.mediaprojectionexample.util.DisplayUtil;
 
-public class MainActivity extends BaseActivity {
+/**
+ * MediaProjection Sample main
+ *
+ * Created by Tae-hwan on 4/8/16.
+ */
+public class MainActivity extends BaseActivity implements MediaProjectionView {
 
     public static final int REQ_CODE_MEDIA_PROJECTION = 1000;
     public static final int REQ_CODE_OVERLAY_PERMISSION = 9999;
@@ -39,9 +44,6 @@ public class MainActivity extends BaseActivity {
     private MediaProjectionManager mediaProjectionManager;
     private MediaProjection mediaProjection;
     private VirtualDisplay virtualDisplay;
-
-    private VideoViewService videoViewService;
-    private boolean isBound = false;
 
     @Override
     protected int getContentView() {
@@ -138,7 +140,7 @@ public class MainActivity extends BaseActivity {
                 mediaProjection = mediaProjectionManager.getMediaProjection(resultCode, data);
                 if (mediaProjection != null && isBound) {
                     mediaProjection.registerCallback(mediaProjectionCallback, null);
-                    virtualDisplay = mediaProjection.createVirtualDisplay("MediaProjection", SCREEN_WIDTH, SCREEN_HEIGHT, getDensityDpi(),
+                    virtualDisplay = mediaProjection.createVirtualDisplay("MediaProjection", SCREEN_WIDTH, SCREEN_HEIGHT, DisplayUtil.getDensityDpi(this),
                             DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, videoViewService.getSurface(), null, null);
 
                     videoViewService.setMediaProjectionStatus(true);
@@ -148,11 +150,7 @@ public class MainActivity extends BaseActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private int getDensityDpi() {
-        DisplayMetrics metrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(metrics);
-        return metrics.densityDpi;
-    }
+
 
     private void startVideoViewService() {
         // Bind to VideoViewService
@@ -166,34 +164,6 @@ public class MainActivity extends BaseActivity {
     private void startMediaProjection() {
         startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), REQ_CODE_MEDIA_PROJECTION);
     }
-
-    private IVideoViewListener videoViewListener = new IVideoViewListener() {
-
-        @Override
-        public void onStartProjection() {
-            startMediaProjection();
-        }
-
-        @Override
-        public void onStopProjection() {
-            if (mediaProjection != null) {
-                mediaProjection.stop();
-                mediaProjection = null;
-            }
-
-            if (virtualDisplay != null) {
-                virtualDisplay.release();
-                virtualDisplay = null;
-            }
-
-            videoViewService.setMediaProjectionStatus(false);
-        }
-
-        @Override
-        public void onDestroyService() {
-            unbindService(serviceConnection);
-        }
-    };
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -219,9 +189,33 @@ public class MainActivity extends BaseActivity {
         public void onStop() {
             super.onStop();
 
-            if (!isFinishing()) {
-                Snackbar.make(floatingActionButton, "MediaProjection stop", Snackbar.LENGTH_SHORT).show();
-            }
+            stop();
         }
     };
+
+    @Override
+    public void startedMediaProjection() {
+
+    }
+
+    @Override
+    public void initMediaProjection() {
+
+    }
+
+    @Override
+    public void stopMediaProjection() {
+        stop();
+    }
+
+    @Override
+    public void failMediaProjection() {
+
+    }
+
+    private void stop() {
+        if (!isFinishing()) {
+            Snackbar.make(floatingActionButton, "MediaProjection stop", Snackbar.LENGTH_SHORT).show();
+        }
+    }
 }

@@ -15,29 +15,43 @@ import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import jp.co.recruit_lifestyle.android.widget.PlayPauseButton;
 import tech.thdev.mediaprojectionexample.R;
-import tech.thdev.mediaprojectionexample.listener.IVideoViewListener;
+import tech.thdev.mediaprojectionexample.presenter.MediaProjectionPresenter;
+import tech.thdev.mediaprojectionexample.service.listener.IVideoViewListener;
+import tech.thdev.mediaprojectionexample.presenter.WindowTouchPresenter;
+import tech.thdev.mediaprojectionexample.presenter.view.WindowTouchView;
 import tech.thdev.mediaprojectionexample.surface.VideoSurfaceTextureListener;
 
 /**
  * Created by Tae-hwan on 4/8/16.
  */
-public class VideoViewService extends Service implements View.OnClickListener {
+public class VideoViewService extends Service implements View.OnClickListener, WindowTouchView {
 
     private View windowView;
     private WindowManager windowManager;
     private WindowManager.LayoutParams windowViewLayoutParams;
 
-    private float touchPrevX;
-    private float touchPrevY;
+    @Bind(R.id.texture_view)
+    TextureView textureView;
+
+    @Bind(R.id.btn_stop_service)
+    Button btnStopService;
+
+    @Bind(R.id.main_play_pause_button)
+    PlayPauseButton playPauseButton;
+
+    private WindowTouchPresenter windowTouchPresenter;
 
     private VideoSurfaceTextureListener videoSurfaceTextureListener;
-    private boolean isStart = false;
 
     private final IBinder binder = new VideoViewBinder();
-    private IVideoViewListener videoViewListener;
+
+    private MediaProjectionPresenter mediaProjectionPresenter;
 
 
     @Nullable
@@ -46,8 +60,8 @@ public class VideoViewService extends Service implements View.OnClickListener {
         return binder;
     }
 
-    public void setVideoViewListener(IVideoViewListener videoViewListener) {
-        this.videoViewListener = videoViewListener;
+    public void setMediaProjectionPresenter(MediaProjectionPresenter mediaProjectionPresenter) {
+        this.mediaProjectionPresenter = mediaProjectionPresenter;
     }
 
     private void onStartMediaProjection() {
@@ -92,17 +106,19 @@ public class VideoViewService extends Service implements View.OnClickListener {
 
         windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         initWindowLayout((LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE));
+
+        ButterKnife.bind(this, windowView);
+
+        windowTouchPresenter = new WindowTouchPresenter(this);
+
         initCreate();
     }
 
     private void initCreate() {
         videoSurfaceTextureListener = new VideoSurfaceTextureListener();
-        final TextureView textureView = (TextureView) windowView.findViewById(R.id.texture_view);
         textureView.setSurfaceTextureListener(videoSurfaceTextureListener);
+        btnStopService.setOnClickListener(this);
 
-        windowView.findViewById(R.id.btn_stop_service).setOnClickListener(this);
-
-        PlayPauseButton playPauseButton = (PlayPauseButton) windowView.findViewById(R.id.main_play_pause_button);
         playPauseButton.setColor(Color.DKGRAY);
         playPauseButton.setOnClickListener(this);
         playPauseButton.setOnControlStatusChangeListener(new PlayPauseButton.OnControlStatusChangeListener() {
@@ -110,6 +126,7 @@ public class VideoViewService extends Service implements View.OnClickListener {
             public void onStatusChange(View view, boolean state) {
                 if (isStart) {
                     onStopMediaProjection();
+
                 } else {
                     onStartMediaProjection();
                 }
@@ -132,37 +149,16 @@ public class VideoViewService extends Service implements View.OnClickListener {
     private View.OnTouchListener touchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    touchPrevX = event.getRawX();
-                    touchPrevY = event.getRawY();
-                    break;
-
-                case MotionEvent.ACTION_MOVE:
-                    float rawX = event.getRawX();
-                    float rawY = event.getRawY();
-
-                    // 이동한 위치에서 처음 위치를 빼서 이동한 거리를 구한다
-                    float x = rawX - touchPrevX;
-                    float y = rawY - touchPrevY;
-
-                    setCoordinateUpdate(x, y);
-
-                    touchPrevX = rawX;
-                    touchPrevY = rawY;
-                    break;
-
-                case MotionEvent.ACTION_UP:
-                    break;
-            }
+            windowTouchPresenter.onTouch(event);
             return false;
         }
     };
 
-    private void setCoordinateUpdate(float x, float y) {
+    @Override
+    public void updateViewLayout(int x, int y) {
         if (windowViewLayoutParams != null) {
-            windowViewLayoutParams.x += (int) x;
-            windowViewLayoutParams.y += (int) y;
+            windowViewLayoutParams.x += x;
+            windowViewLayoutParams.y += y;
 
             windowManager.updateViewLayout(windowView, windowViewLayoutParams);
         }
@@ -196,6 +192,8 @@ public class VideoViewService extends Service implements View.OnClickListener {
         }
 
         onStopMediaProjection();
+
+        ButterKnife.unbind(this);
     }
 
     public class VideoViewBinder extends Binder {

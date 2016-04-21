@@ -24,7 +24,8 @@
 
         <activity
             android:name=".MediaProjectionActivity"
-            android:label="@string/start_media_projection_activity" />
+            android:label="@string/start_media_projection_activity"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <service android:name=".service.VideoViewService" />
     </application>

@@ -8,8 +8,8 @@ android {
         applicationId "tech.thdev.mediaprojectionexample"
         minSdkVersion 21
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.0.2"
     }
     buildTypes {
         release {
@@ -20,10 +20,16 @@ android {
 }
 
 dependencies {
+    ext {
+        supportLibVersion = '23.3.0'
+    }
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:design:23.3.0'
+
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:design:${supportLibVersion}"
+
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.github.recruit-lifestyle:PlayPauseButton:1.0'
 }
