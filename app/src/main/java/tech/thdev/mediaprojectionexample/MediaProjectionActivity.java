@@ -7,7 +7,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.TextureView;
 import android.view.View;
-import android.widget.Toast;
 
 import butterknife.Bind;
 import butterknife.OnClick;
@@ -15,6 +14,7 @@ import tech.thdev.mediaprojectionexample.base.BaseActivity;
 import tech.thdev.mediaprojectionexample.presenter.MediaProjectionPresenter;
 import tech.thdev.mediaprojectionexample.presenter.view.MediaProjectionView;
 import tech.thdev.mediaprojectionexample.surface.VideoSurfaceTextureListener;
+import tech.thdev.mediaprojectionexample.util.DisplayUtil;
 
 
 /**
@@ -41,7 +41,7 @@ public class MediaProjectionActivity extends BaseActivity implements MediaProjec
 
     @Override
     protected int getContentView() {
-        return R.layout.activity_media_projection;
+        return R.layout.activity_media_projection_access;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class MediaProjectionActivity extends BaseActivity implements MediaProjec
         VideoSurfaceTextureListener videoSurfaceTextureListener = new VideoSurfaceTextureListener();
         textureView.setSurfaceTextureListener(videoSurfaceTextureListener);
 
-        mediaProjectionPresenter = new MediaProjectionPresenter(this, this, projectionManager, videoSurfaceTextureListener);
+        mediaProjectionPresenter = new MediaProjectionPresenter(this, projectionManager, videoSurfaceTextureListener);
     }
 
     @OnClick(R.id.fab)
@@ -63,7 +63,7 @@ public class MediaProjectionActivity extends BaseActivity implements MediaProjec
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQUEST_MEDIA_PROJECTION:
-                mediaProjectionPresenter.initMediaProjection(resultCode, data);
+                mediaProjectionPresenter.initMediaProjection(resultCode, data, DisplayUtil.getDensityDpi(this));
                 break;
         }
 
