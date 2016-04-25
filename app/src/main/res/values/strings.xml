@@ -4,5 +4,8 @@
     <string name="start_media_projection_service">Start mediaProjection Service</string>
     <string name="start_media_projection_activity">Start mediaProjection Activity</string>
 
-    <string name="media_projection_reject">Reject media projection</string>
+    <string name="media_projection_started">Started mediaProjection</string>
+    <string name="media_projection_stopped">Stopped mediaProjection</string>
+    <string name="media_projection_reject">Reject mediaProjection</string>
+    <string name="media_projection_fail">Fail mediaProjection</string>
 </resources>

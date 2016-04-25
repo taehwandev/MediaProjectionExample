@@ -4,68 +4,60 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
-import tech.thdev.media_projection_library.R;
-import tech.thdev.media_projection_library.constant.Constant;
-import tech.thdev.media_projection_library.listener.OnMediaProjectionAccessListener;
 import tech.thdev.media_projection_library.param.MediaProjectionControllerParams;
-import tech.thdev.media_projection_library.presenter.MediaProjectionPresenter;
-import tech.thdev.media_projection_library.presenter.view.MediaProjectionView;
-import tech.thdev.media_projection_library.util.DisplayUtil;
+import tech.thdev.media_projection_library.presenter.MediaProjectionAccessPresenter;
+import tech.thdev.media_projection_library.presenter.view.MediaProjectionAccessView;
 
-public class MediaProjectionAccessActivity extends AppCompatActivity implements MediaProjectionView {
+/**
+ * Created by Tae-hwan on 4/25/16.
+ * <p/>
+ * MediaProjection Abstract
+ */
+public abstract class MediaProjectionAccessActivity extends AppCompatActivity implements MediaProjectionAccessView {
 
-    private static final int REQ_CODE_MEDIA_PROJECTION = 1000;
+    public static final int REQ_CODE_MEDIA_PROJECTION = 1000;
 
-    private MediaProjectionPresenter mediaProjectionPresenter;
-    private MediaProjectionControllerParams controllerParams;
+    private MediaProjectionAccessPresenter mediaProjectionAccessPresenter;
+    private MediaProjectionManager mediaProjectionManager;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_media_projection_access);
 
-        controllerParams = (MediaProjectionControllerParams) getIntent().getParcelableExtra(Constant.KEY_INTENT_CONTROL_PARAMS);
-        MediaProjectionManager mediaProjectionManager =
-                (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-        mediaProjectionPresenter = new MediaProjectionPresenter(this, mediaProjectionManager, controllerParams);
+        mediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+        mediaProjectionAccessPresenter = new MediaProjectionAccessPresenter(this, this, mediaProjectionManager);
+    }
 
+    /**
+     * Projection start
+     *
+     * @param controllerParams
+     */
+    public void createMediaProjection(MediaProjectionControllerParams controllerParams) {
+        mediaProjectionAccessPresenter.setControllerParams(controllerParams);
         startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), REQ_CODE_MEDIA_PROJECTION);
     }
 
-    @Override
-    public void startedMediaProjection() {
-        setType(OnMediaProjectionAccessListener.TYPE_SUCCESS);
-    }
-
-    @Override
-    public void rejectMediaProjection() {
-        setType(OnMediaProjectionAccessListener.TYPE_REJECT);
-    }
-
-    @Override
-    public void failMediaProjection() {
-        setType(OnMediaProjectionAccessListener.TYPE_FAIL);
+    /**
+     * MediaProjection stop.
+     */
+    public void stopMediaProjection() {
+        mediaProjectionAccessPresenter.destroyMediaProjection();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case REQ_CODE_MEDIA_PROJECTION:
-                mediaProjectionPresenter.initMediaProjection(resultCode, data, DisplayUtil.getDensityDpi(this));
-                return;
-        }
-//        setType(MediaProjectionControllerParams.TYPE_FAIL);
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+                mediaProjectionAccessPresenter.initMediaProjection(resultCode, data);
+                break;
 
-    private void setType(int type) {
-        Log.d("TAG", "getMediaProjectionListener " + controllerParams.getMediaProjectionListener());
-        if (controllerParams.getMediaProjectionListener() != null) {
-            controllerParams.getMediaProjectionListener().onMediaProjectionEvent(type);
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
         }
-        finish();
     }
 }

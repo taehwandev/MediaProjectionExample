@@ -1,7 +1,6 @@
-package tech.thdev.media_projection_library.base.presenter;
+package tech.thdev.mediaprojectionexample.base.presenter;
 
-
-import tech.thdev.media_projection_library.base.presenter.view.BaseView;
+import tech.thdev.mediaprojectionexample.base.presenter.view.BaseView;
 
 /**
  * Created by Tae-hwan on 4/21/16.

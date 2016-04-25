@@ -1,4 +1,4 @@
-package tech.thdev.mediaprojectionexample.base;
+package tech.thdev.mediaprojectionexample.base.view;
 
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
@@ -25,7 +25,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(getContentView());
+        setContentView(getContentLayoutResource());
 
         ButterKnife.bind(this);
 
@@ -46,7 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     @LayoutRes
-    protected abstract int getContentView();
+    protected abstract int getContentLayoutResource();
 
     protected abstract void onCreate();
 

@@ -2,10 +2,13 @@ package tech.thdev.mediaprojectionexample.presenter;
 
 import android.view.MotionEvent;
 
+import tech.thdev.mediaprojectionexample.base.presenter.BasePresenter;
 import tech.thdev.mediaprojectionexample.presenter.view.WindowTouchView;
 
 /**
  * Created by Tae-hwan on 4/21/16.
+ * <p>
+ * Window ui touch event process
  */
 public class WindowTouchPresenter extends BasePresenter<WindowTouchView> {
 

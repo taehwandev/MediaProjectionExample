@@ -1,29 +1,49 @@
 package tech.thdev.media_projection_library.param;
 
-import android.app.Activity;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.view.Surface;
 
-import tech.thdev.media_projection_library.constant.Constant;
-import tech.thdev.media_projection_library.listener.OnMediaProjectionAccessListener;
+import tech.thdev.media_projection_library.constant.MediaProjectionConstant;
 
 /**
  * Created by Tae-hwan on 4/22/16.
+ * <p/>
+ * MediaProjection init params.
  */
 public class MediaProjectionControllerParams implements Parcelable {
 
-    private Activity activity;
     private Surface surface;
-    private String projectionName = "media-projection";
-    private int width = Constant.DEFAULT_SIZE_WIDTH;
-    private int height = Constant.DEFAULT_SIZE_HEIGHT;
+    private String projectionName = MediaProjectionConstant.VALUE_PROJECTION_NAME;
+    private int width = MediaProjectionConstant.VALUE_SIZE_WIDTH;
+    private int height = MediaProjectionConstant.VALUE_SIZE_HEIGHT;
 
-    private OnMediaProjectionAccessListener mediaProjectionListener;
+    public static MediaProjectionControllerParams create(Surface surface) {
+        return create(surface, MediaProjectionConstant.VALUE_PROJECTION_NAME, MediaProjectionConstant.VALUE_SIZE_WIDTH, MediaProjectionConstant.VALUE_SIZE_HEIGHT);
+    }
 
-    public MediaProjectionControllerParams(Activity activity, OnMediaProjectionAccessListener mediaProjectionListener) {
-        this.activity = activity;
-        this.mediaProjectionListener = mediaProjectionListener;
+    public static MediaProjectionControllerParams create(Surface surface, int width, int height) {
+        return create(surface, MediaProjectionConstant.VALUE_PROJECTION_NAME, width, height);
+    }
+
+    /**
+     * MediaProjection params create
+     *
+     * @param surface TextureView
+     * @param projectionName Create projection name
+     * @param width VirtualDisplay width
+     * @param height VirtualDisplay height
+     * @return
+     */
+    public static MediaProjectionControllerParams create(Surface surface, String projectionName, int width, int height) {
+        return new MediaProjectionControllerParams(surface, projectionName, width, height);
+    }
+
+    public MediaProjectionControllerParams(Surface surface, String projectionName, int width, int height) {
+        this.surface = surface;
+        this.projectionName = projectionName;
+        this.width = width;
+        this.height = height;
     }
 
     public MediaProjectionControllerParams(Parcel source) {
@@ -31,10 +51,6 @@ public class MediaProjectionControllerParams implements Parcelable {
         projectionName = source.readString();
         width = source.readInt();
         height = source.readInt();
-
-//        mediaProjectionListener = source.readParcelable(OnMediaProjectionAccessListener.class.getClassLoader());
-        mediaProjectionListener = (OnMediaProjectionAccessListener) source.readSerializable();
-
     }
 
     @Override
@@ -48,13 +64,6 @@ public class MediaProjectionControllerParams implements Parcelable {
         dest.writeString(projectionName);
         dest.writeInt(width);
         dest.writeInt(height);
-
-//        dest.writeParcelable(mediaProjectionListener, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
-        dest.writeSerializable(mediaProjectionListener);
-    }
-
-    public Activity getActivity() {
-        return activity;
     }
 
     public void setSurface(Surface surface) {
@@ -87,10 +96,6 @@ public class MediaProjectionControllerParams implements Parcelable {
 
     public int getHeight() {
         return height;
-    }
-
-    public OnMediaProjectionAccessListener getMediaProjectionListener() {
-        return mediaProjectionListener;
     }
 
     public static final Parcelable.Creator<MediaProjectionControllerParams>

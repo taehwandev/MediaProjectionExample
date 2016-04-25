@@ -10,6 +10,8 @@ android {
         targetSdkVersion 23
         versionCode 2
         versionName "1.0.2"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -29,6 +31,8 @@ dependencies {
     ext {
         supportLibVersion = '23.3.0'
         butterKnife = '7.0.1'
+        testLibVersion = '0.5'
+        espressoLibVersion = '2.2.2'
     }
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -41,4 +45,19 @@ dependencies {
     compile 'com.github.recruit-lifestyle:PlayPauseButton:1.0'
 
     compile project(':mediaProjectionLibrary')
+
+    // Testing-only dependencies
+
+    // Error:Conflict with dependency 'com.android.support:support-annotations'.
+    // Resolved versions for app (23.3.0) and test app (23.1.1) differ.
+    // See http://g.co/androidstudio/app-test-app-conflict for details.
+    androidTestCompile "com.android.support:support-annotations:${supportLibVersion}"
+
+    androidTestCompile "com.android.support.test:runner:${testLibVersion}"
+    androidTestCompile "com.android.support.test:rules:${testLibVersion}"
+
+    androidTestCompile "com.android.support.test.espresso:espresso-core:${espressoLibVersion}"
+
+    // add this for intent mocking support
+    androidTestCompile "com.android.support.test.espresso:espresso-intents:${espressoLibVersion}"
 }

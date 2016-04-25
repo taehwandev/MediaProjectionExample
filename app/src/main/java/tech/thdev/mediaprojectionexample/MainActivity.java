@@ -1,30 +1,26 @@
 package tech.thdev.mediaprojectionexample;
 
 import android.content.Intent;
-import android.media.projection.MediaProjection;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import butterknife.Bind;
 import butterknife.OnClick;
-import tech.thdev.media_projection_library.control.MediaProjectionController;
-import tech.thdev.media_projection_library.listener.OnMediaProjectionAccessListener;
-import tech.thdev.mediaprojectionexample.base.BaseActivity;
-import tech.thdev.mediaprojectionexample.presenter.view.MediaProjectionView;
+import tech.thdev.mediaprojectionexample.base.view.BaseActivity;
+import tech.thdev.mediaprojectionexample.service.VideoViewService;
 
 /**
  * MediaProjection Sample main
- *
+ * <p/>
  * Created by Tae-hwan on 4/8/16.
  */
-public class MainActivity extends BaseActivity implements MediaProjectionView {
+public class MainActivity extends BaseActivity {
 
     public static final int REQ_CODE_OVERLAY_PERMISSION = 9999;
 
@@ -32,7 +28,7 @@ public class MainActivity extends BaseActivity implements MediaProjectionView {
     FloatingActionButton floatingActionButton;
 
     @Override
-    protected int getContentView() {
+    protected int getContentLayoutResource() {
         return R.layout.activity_main;
     }
 
@@ -73,11 +69,6 @@ public class MainActivity extends BaseActivity implements MediaProjectionView {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-//        if (isBound) {
-//            unbindService(serviceConnection);
-//            isBound = false;
-//        }
     }
 
     @OnClick(R.id.btn_start_media_projection_service)
@@ -92,13 +83,9 @@ public class MainActivity extends BaseActivity implements MediaProjectionView {
         }
     }
 
-    private MediaProjectionController mediaProjectionController;
     @OnClick(R.id.btn_start_media_projection_activity)
     public void onClickStartMediaProjectionActivity(View view) {
-//        startActivity(new Intent(this, MediaProjectionActivity.class));
-//        startActivity(new Intent(this, MediaProjectionAccessActivity.class));
-
-        mediaProjectionController = new MediaProjectionController.Builder(this).setWidth(1200).setHeight(1500).create();
+        startActivity(new Intent(this, MediaProjectionActivity.class));
     }
 
     @Override
@@ -112,91 +99,13 @@ public class MainActivity extends BaseActivity implements MediaProjectionView {
                 }
                 break;
 
-//            case REQ_CODE_MEDIA_PROJECTION:
-//                if (resultCode != RESULT_OK) {
-//                    Snackbar.make(floatingActionButton, "Reject media projection", Snackbar.LENGTH_SHORT).show();
-//                    return;
-//                }
-//
-//                mediaProjection = mediaProjectionManager.getMediaProjection(resultCode, data);
-//                if (mediaProjection != null && isBound) {
-//                    mediaProjection.registerCallback(mediaProjectionCallback, null);
-//                    virtualDisplay = mediaProjection.createVirtualDisplay("MediaProjection", SCREEN_WIDTH, SCREEN_HEIGHT, DisplayUtil.getDensityDpi(this),
-//                            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, videoViewService.getSurface(), null, null);
-//
-//                    videoViewService.setMediaProjectionStatus(true);
-//                }
-//                break;
+            default:
+                break;
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
-
     private void startVideoViewService() {
-        // Bind to VideoViewService
-//        Intent intent = new Intent(this, VideoViewService.class);
-//        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-
-    /**
-     * MediaProjection acquired rights
-     */
-    private void startMediaProjection() {
-//        startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), REQ_CODE_MEDIA_PROJECTION);
-    }
-
-//    private ServiceConnection serviceConnection = new ServiceConnection() {
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            VideoViewService.VideoViewBinder binder = (VideoViewService.VideoViewBinder) service;
-//            videoViewService = binder.getService();
-//            videoViewService.setVideoViewListener(videoViewListener);
-//            isBound = true;
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//            isBound = false;
-//        }
-//    };
-
-    /**
-     * MediaProjection.Callback
-     */
-    private MediaProjection.Callback mediaProjectionCallback = new MediaProjection.Callback() {
-
-        @Override
-        public void onStop() {
-            super.onStop();
-
-            stop();
-        }
-    };
-
-    @Override
-    public void startedMediaProjection() {
-
-    }
-
-    @Override
-    public void initMediaProjection() {
-
-    }
-
-    @Override
-    public void stopMediaProjection() {
-        stop();
-    }
-
-    @Override
-    public void failMediaProjection() {
-
-    }
-
-    private void stop() {
-        if (!isFinishing()) {
-            Snackbar.make(floatingActionButton, "MediaProjection stop", Snackbar.LENGTH_SHORT).show();
-        }
+        startService(new Intent(this, VideoViewService.class));
     }
 }

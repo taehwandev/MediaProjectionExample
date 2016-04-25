@@ -27,7 +27,12 @@
             android:label="@string/start_media_projection_activity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <!--<service android:name=".service.VideoViewService" />-->
+        <activity
+            android:name=".view.TransparentMediaProjectionActivity"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Transparent" />
+
+        <service android:name=".service.VideoViewService" />
     </application>
 
 </manifest>
