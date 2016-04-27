@@ -7,7 +7,7 @@ import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import tech.thdev.mediaprojectionexample.R;
 
@@ -19,7 +19,7 @@ import tech.thdev.mediaprojectionexample.R;
 public abstract class BaseActivity extends AppCompatActivity {
 
     @Nullable
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolBar;
 
     @Override
@@ -54,11 +54,5 @@ public abstract class BaseActivity extends AppCompatActivity {
     @StringRes
     int getToolbarTitle() {
         return 0;
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        ButterKnife.unbind(this);
     }
 }

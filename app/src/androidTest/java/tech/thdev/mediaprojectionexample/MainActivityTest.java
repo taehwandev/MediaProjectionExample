@@ -3,13 +3,14 @@ package tech.thdev.mediaprojectionexample;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import tech.thdev.mediaprojectionexample.view.MainActivity;
 
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
@@ -24,16 +25,15 @@ public class MainActivityTest {
     // create  a signal to let us know when our task is done.
     final CountDownLatch signal = new CountDownLatch(1);
 
-    private MainActivity activity;
-
     @Rule
     public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(MainActivity.class);
 
-    @Before
-    public void setUp() throws Exception {
-        activity = activityRule.getActivity();
-    }
-
+    /**
+     * Test example.
+     * MediaProjection Don't show again checked test.
+     *
+     * @throws Exception
+     */
     @Test
     public void testStartActivity() throws Exception {
         onView(withId(R.id.btn_start_media_projection_activity)).perform(click());
@@ -41,9 +41,9 @@ public class MainActivityTest {
         onView(withId(R.id.fab)).perform(click());
 
         /* The testing thread will wait here until the UI thread releases it
-        * above with the countDown() or 10 seconds passes and it times out.
+        * above with the countDown() or 5 seconds passes and it times out.
         */
-        signal.await(10, TimeUnit.SECONDS);
+        signal.await(5, TimeUnit.SECONDS);
 
         onView(withId(R.id.fab)).perform(click());
     }

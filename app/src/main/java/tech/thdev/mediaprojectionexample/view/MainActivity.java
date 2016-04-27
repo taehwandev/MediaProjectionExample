@@ -1,4 +1,4 @@
-package tech.thdev.mediaprojectionexample;
+package tech.thdev.mediaprojectionexample.view;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -10,8 +10,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
+import tech.thdev.mediaprojectionexample.R;
 import tech.thdev.mediaprojectionexample.base.view.BaseActivity;
 import tech.thdev.mediaprojectionexample.service.VideoViewService;
 
@@ -24,7 +25,7 @@ public class MainActivity extends BaseActivity {
 
     public static final int REQ_CODE_OVERLAY_PERMISSION = 9999;
 
-    @Bind(R.id.fab)
+    @BindView(R.id.fab)
     FloatingActionButton floatingActionButton;
 
     @Override

@@ -1,12 +1,20 @@
 # MediaProjectionExample
 [![License](https://img.shields.io/hexpm/l/plug.svg)]()
 
+
 ## Requirements
+- Android studio 2.1
+
+- Gradle wrapper : 2.12-all
+- build gradle : com.android.tools.build:gradle:2.1.0
+
 - Target Sdk Version : 23
 - Min Sdk Version : 21
 
+
 ## Blog
 [MediaProjection 사용해보기](http://thdev.tech/Android-MediaProjection-Exmple/)
+
 
 ## Use API
 - [PlayPauseButton](https://github.com/recruit-lifestyle/PlayPauseButton)

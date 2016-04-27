@@ -1,14 +1,15 @@
-package tech.thdev.mediaprojectionexample;
+package tech.thdev.mediaprojectionexample.view;
 
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.TextureView;
 import android.view.View;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 import tech.thdev.media_projection_library.constant.MediaProjectionConstant;
 import tech.thdev.media_projection_library.param.MediaProjectionControllerParams;
+import tech.thdev.mediaprojectionexample.R;
 import tech.thdev.mediaprojectionexample.base.view.BaseMediaProjectionActivity;
 import tech.thdev.mediaprojectionexample.surface.VideoSurfaceTextureListener;
 
@@ -20,10 +21,10 @@ import tech.thdev.mediaprojectionexample.surface.VideoSurfaceTextureListener;
  */
 public class MediaProjectionActivity extends BaseMediaProjectionActivity {
 
-    @Bind(R.id.texture_view)
+    @BindView(R.id.texture_view)
     TextureView textureView;
 
-    @Bind(R.id.fab)
+    @BindView(R.id.fab)
     FloatingActionButton floatingActionButton;
 
     private VideoSurfaceTextureListener videoSurfaceTextureListener;

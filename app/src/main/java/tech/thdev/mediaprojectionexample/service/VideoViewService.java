@@ -18,7 +18,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.co.recruit_lifestyle.android.widget.PlayPauseButton;
 import tech.thdev.media_projection_library.constant.MediaProjectionConstant;
@@ -41,13 +41,13 @@ public class VideoViewService extends Service implements View.OnClickListener, W
     private WindowManager windowManager;
     private WindowManager.LayoutParams windowViewLayoutParams;
 
-    @Bind(R.id.texture_view)
+    @BindView(R.id.texture_view)
     TextureView textureView;
 
-    @Bind(R.id.btn_stop_service)
+    @BindView(R.id.btn_stop_service)
     Button btnStopService;
 
-    @Bind(R.id.main_play_pause_button)
+    @BindView(R.id.main_play_pause_button)
     PlayPauseButton playPauseButton;
 
     private WindowTouchPresenter windowTouchPresenter;
@@ -208,7 +208,5 @@ public class VideoViewService extends Service implements View.OnClickListener, W
             }
             windowView = null;
         }
-
-        ButterKnife.unbind(this);
     }
 }

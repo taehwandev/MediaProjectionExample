@@ -15,6 +15,8 @@ import tech.thdev.mediaprojectionexample.constant.Constant;
 
 /**
  * Created by Tae-hwan on 4/25/16.
+ * <p/>
+ * MediaProjection Access activity
  */
 public class TransparentMediaProjectionActivity extends BaseMediaProjectionActivity {
 
