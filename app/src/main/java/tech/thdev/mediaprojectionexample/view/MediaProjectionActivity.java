@@ -11,6 +11,8 @@ import tech.thdev.media_projection_library.constant.MediaProjectionConstant;
 import tech.thdev.media_projection_library.param.MediaProjectionControllerParams;
 import tech.thdev.mediaprojectionexample.R;
 import tech.thdev.mediaprojectionexample.base.view.BaseMediaProjectionActivity;
+import tech.thdev.mediaprojectionexample.presenter.MediaProjectionPresenter;
+import tech.thdev.mediaprojectionexample.presenter.view.MediaProjectionPresenterView;
 import tech.thdev.mediaprojectionexample.surface.VideoSurfaceTextureListener;
 
 
@@ -19,7 +21,7 @@ import tech.thdev.mediaprojectionexample.surface.VideoSurfaceTextureListener;
  * <p/>
  * MediaProjection example.
  */
-public class MediaProjectionActivity extends BaseMediaProjectionActivity {
+public class MediaProjectionActivity extends BaseMediaProjectionActivity implements MediaProjectionPresenterView {
 
     @BindView(R.id.texture_view)
     TextureView textureView;
@@ -28,7 +30,7 @@ public class MediaProjectionActivity extends BaseMediaProjectionActivity {
     FloatingActionButton floatingActionButton;
 
     private VideoSurfaceTextureListener videoSurfaceTextureListener;
-    private boolean isStated = false;
+    private MediaProjectionPresenter mediaProjectionPresenter;
 
     @Override
     protected int getContentLayoutResource() {
@@ -37,51 +39,19 @@ public class MediaProjectionActivity extends BaseMediaProjectionActivity {
 
     @Override
     protected void onCreate() {
-        isStated = false;
-
+        mediaProjectionPresenter = new MediaProjectionPresenter(this);
         videoSurfaceTextureListener = new VideoSurfaceTextureListener();
         textureView.setSurfaceTextureListener(videoSurfaceTextureListener);
     }
 
     @OnClick(R.id.fab)
     public void onClickFloatingActionButton(View view) {
-        if (isStated) {
-            stopMediaProjection();
-
-        } else {
-            createMediaProjection(MediaProjectionControllerParams.create(videoSurfaceTextureListener.getSurface()));
-        }
+        mediaProjectionPresenter.startMediaProjection();
     }
 
     @Override
     public void onMediaProjectionAccessStatus(@MediaProjectionConstant.ProjectionStatusType int type) {
-        isStated = false;
-        switch (type) {
-            case MediaProjectionConstant.PROJECTION_TYPE_STARTED:
-                isStated = true;
-
-                if (floatingActionButton != null) {
-                    floatingActionButton.setImageResource(android.R.drawable.ic_media_pause);
-                }
-                break;
-
-            case MediaProjectionConstant.PROJECTION_TYPE_STOPPED:
-                if (floatingActionButton != null) {
-                    floatingActionButton.setImageResource(android.R.drawable.ic_media_play);
-                }
-                break;
-
-            case MediaProjectionConstant.PROJECTION_TYPE_FAIL:
-                Snackbar.make(floatingActionButton, R.string.media_projection_fail, Snackbar.LENGTH_SHORT).show();
-                break;
-
-            case MediaProjectionConstant.PROJECTION_TYPE_REJECT:
-                Snackbar.make(floatingActionButton, R.string.media_projection_reject, Snackbar.LENGTH_SHORT).show();
-                break;
-
-            default:
-                break;
-        }
+        mediaProjectionPresenter.mediaProjectionAccessStatus(type);
     }
 
     @Override
@@ -89,5 +59,39 @@ public class MediaProjectionActivity extends BaseMediaProjectionActivity {
         super.onDestroy();
 
         stopMediaProjection();
+    }
+
+    @Override
+    public void onStopMediaProjection() {
+        stopMediaProjection();
+    }
+
+    @Override
+    public void onCreateMediaProjection() {
+        createMediaProjection(MediaProjectionControllerParams.create(videoSurfaceTextureListener.getSurface()));
+    }
+
+    @Override
+    public void onProjectionStarted() {
+        if (floatingActionButton != null) {
+            floatingActionButton.setImageResource(android.R.drawable.ic_media_pause);
+        }
+    }
+
+    @Override
+    public void onProjectionStopped() {
+        if (floatingActionButton != null) {
+            floatingActionButton.setImageResource(android.R.drawable.ic_media_play);
+        }
+    }
+
+    @Override
+    public void onProjectionFail() {
+        Snackbar.make(floatingActionButton, R.string.media_projection_fail, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onProjectionReject() {
+        Snackbar.make(floatingActionButton, R.string.media_projection_reject, Snackbar.LENGTH_SHORT).show();
     }
 }

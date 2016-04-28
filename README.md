@@ -1,12 +1,16 @@
 # MediaProjectionExample
 [![License](https://img.shields.io/hexpm/l/plug.svg)]()
 
+Maybe MVP pattern MediaProjection Example.
 
-## Requirements
 - Android studio 2.1
 
-- Gradle wrapper : 2.12-all
+## Gradle version info
+
+- Gradle wrapper : 2.13-all
 - build gradle : com.android.tools.build:gradle:2.1.0
+
+## Requirements
 
 - Target Sdk Version : 23
 - Min Sdk Version : 21
