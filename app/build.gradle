@@ -38,7 +38,7 @@ android {
 dependencies {
     ext {
         supportLibVersion = '23.3.0'
-        butterKnife = '8.0.0'
+        butterKnife = '8.0.1'
         testLibVersion = '0.5'
         espressoLibVersion = '2.2.2'
     }
