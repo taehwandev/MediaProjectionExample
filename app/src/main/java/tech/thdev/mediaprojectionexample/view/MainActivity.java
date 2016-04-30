@@ -52,7 +52,8 @@ public class MainActivity extends BaseActivity implements MainPresenterView {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_open_source_license) {
+            startActivity(new Intent(MainActivity.this, OpenSourceLicenseActivity.class));
             return true;
         }
 

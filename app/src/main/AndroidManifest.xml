@@ -31,6 +31,9 @@
             android:name=".view.TransparentMediaProjectionActivity"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.Transparent" />
+        
+        <activity android:name=".view.OpenSourceLicenseActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".service.VideoViewService" />
     </application>
