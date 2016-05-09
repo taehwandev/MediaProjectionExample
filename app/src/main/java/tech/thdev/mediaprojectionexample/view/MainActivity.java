@@ -18,8 +18,6 @@ import tech.thdev.mediaprojectionexample.service.VideoViewService;
 
 /**
  * MediaProjection Sample main
- *
- *
  * <p/>
  * Created by Tae-hwan on 4/8/16.
  */
