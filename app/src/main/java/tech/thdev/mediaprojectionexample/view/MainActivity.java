@@ -51,7 +51,7 @@ public class MainActivity extends BaseActivity implements MainPresenterView {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // noinspection SimplifiableIfStatement
         if (id == R.id.action_open_source_license) {
             startActivity(new Intent(MainActivity.this, OpenSourceLicenseActivity.class));
             return true;
