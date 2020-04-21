@@ -1,9 +1,0 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".view.MainActivity" >
-    <item android:id="@+id/action_open_source_license"
-        android:title="@string/open_source_license"
-        android:orderInCategory="100"
-        app:showAsAction="never" />
-</menu>

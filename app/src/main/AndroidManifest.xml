@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="tech.thdev.mediaprojectionexample">
 
 
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -12,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".view.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -23,19 +25,18 @@
         </activity>
 
         <activity
-            android:name=".view.MediaProjectionActivity"
+            android:name=".ui.mediaprojection.MediaProjectionActivity"
             android:label="@string/start_media_projection_activity"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
-            android:name=".view.TransparentMediaProjectionActivity"
+            android:name=".ui.mediaprojection.TransparentMediaProjectionActivity"
             android:launchMode="singleInstance"
             android:theme="@style/Theme.Transparent" />
-        
-        <activity android:name=".view.OpenSourceLicenseActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
 
-        <service android:name=".service.VideoViewService" />
+        <service android:name=".service.VideoViewService"
+            android:foregroundServiceType="mediaProjection"
+            tools:targetApi="q" />
     </application>
 
 </manifest>
