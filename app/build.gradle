@@ -1,23 +1,17 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
-
-    dexOptions {
-        incremental true
-        // Runtime cpu count
-        maxProcessCount Math.max(1, ((int) (Runtime.getRuntime().availableProcessors() / 2)))
-        javaMaxHeapSize "2g"
-    }
+    compileSdkVersion compileSdkVersionInfo
+    buildToolsVersion buildToolsVersionInfo
 
     defaultConfig {
-        applicationId "tech.thdev.mediaprojectionexample"
-        minSdkVersion 21
-        targetSdkVersion 23
-        versionCode 3
-        versionName "1.0.3"
+        applicationId "tech.thdev.app"
+        minSdkVersion minSdkVerisonInfo
+        targetSdkVersion targetSdkVersionInfo
+        versionCode 4
+        versionName "1.1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -30,43 +24,40 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    viewBinding {
+        enabled = true
     }
 }
 
 dependencies {
-    ext {
-        supportLibVersion = '23.3.0'
-        butterKnife = '8.0.1'
-        testLibVersion = '0.5'
-        espressoLibVersion = '2.2.2'
-    }
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
-    compile "com.android.support:appcompat-v7:${supportLibVersion}"
-    compile "com.android.support:design:${supportLibVersion}"
+    implementation "androidx.appcompat:appcompat:$appcompatVersion"
+    implementation "androidx.activity:activity:$activityVersion"
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
+    implementation "com.google.android.material:material:$materialVersion"
 
-    compile "com.jakewharton:butterknife:${butterKnife}"
-    apt "com.jakewharton:butterknife-compiler:${butterKnife}"
-    compile 'com.github.recruit-lifestyle:PlayPauseButton:1.0'
+    implementation "androidx.core:core-ktx:$coreKtx"
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtensions"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleExtensions"
 
-    compile project(':mediaProjectionLibrary')
+    implementation 'com.github.recruit-lifestyle:PlayPauseButton:1.0'
+
+    implementation project(':mediaProjectionLibrary')
 
     // Testing-only dependencies
-
-    // Error:Conflict with dependency 'com.android.support:support-annotations'.
-    // Resolved versions for app (23.3.0) and test app (23.1.1) differ.
-    // See http://g.co/androidstudio/app-test-app-conflict for details.
-    androidTestCompile "com.android.support:support-annotations:${supportLibVersion}"
-
-    androidTestCompile "com.android.support.test:runner:${testLibVersion}"
-    androidTestCompile "com.android.support.test:rules:${testLibVersion}"
-
-    androidTestCompile "com.android.support.test.espresso:espresso-core:${espressoLibVersion}"
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
     // add this for intent mocking support
-    androidTestCompile "com.android.support.test.espresso:espresso-intents:${espressoLibVersion}"
+    androidTestImplementation 'androidx.test.espresso:espresso-intents:3.2.0'
 }
