@@ -63,9 +63,9 @@ internal class MediaProjectionResultContract : ActivityResultContract<Intent, In
 
     override fun parseResult(resultCode: Int, intent: Intent?): Intent {
         return if (resultCode == Activity.RESULT_OK && intent != null) {
-            MediaProjectionBroadcastReceiver.newInstance(resultCode, intent)
+            MediaProjectionAccessBroadcastReceiver.newInstance(resultCode, intent)
         } else {
-            MediaProjectionBroadcastReceiver.newReject()
+            MediaProjectionAccessBroadcastReceiver.newReject()
         }
     }
 }

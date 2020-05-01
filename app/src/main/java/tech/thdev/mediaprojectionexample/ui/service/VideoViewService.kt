@@ -11,7 +11,8 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
 import android.widget.Toast
-import tech.thdev.media_projection_library.constant.MediaProjectionStatus
+import tech.thdev.media_projection_library.MediaProjectionStatus
+import tech.thdev.media_projection_library.MediaProjectionStatusData
 import tech.thdev.media_projection_library.ui.MediaProjectionAccessService
 import tech.thdev.mediaprojectionexample.R
 import tech.thdev.mediaprojectionexample.databinding.WindowVideoViewBinding
@@ -113,10 +114,10 @@ class VideoViewService : MediaProjectionAccessService() {
         }
     }
 
-    override fun onChangeStatus(status: MediaProjectionStatus) {
-        super.onChangeStatus(status)
+    override fun onChangeStatus(statusData: MediaProjectionStatusData) {
+        super.onChangeStatus(statusData)
 
-        when (status) {
+        when (statusData.status) {
             MediaProjectionStatus.OnInitialized -> {
                 startMediaProjection(windowBinding.surfaceView.holder.surface)
             }

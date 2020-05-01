@@ -4,11 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.Messenger
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-import tech.thdev.media_projection_library.constant.MediaProjectionStatus
+import tech.thdev.media_projection_library.MediaProjectionStatus
+import tech.thdev.media_projection_library.MediaProjectionStatusData
 import tech.thdev.media_projection_library.ui.MediaProjectionAccessService
+import tech.thdev.media_projection_library.ui.MediaProjectionAccessServiceBroadcastReceiver
 import tech.thdev.mediaprojectionexample.R
 import tech.thdev.mediaprojectionexample.databinding.ActivityMediaProjectionBinding
 import tech.thdev.mediaprojectionexample.databinding.ContentMediaProjectionBinding
@@ -29,10 +30,6 @@ class MediaProjectionActivity : AppCompatActivity() {
 
     private val surfaceViewHolder: SurfaceViewHolder by lazy {
         SurfaceViewHolder()
-    }
-
-    private val messenger: Messenger by lazy {
-        Messenger(MediaProjectionHandler(::onChangeStatus))
     }
 
     private var isStart = false
@@ -59,8 +56,8 @@ class MediaProjectionActivity : AppCompatActivity() {
         }
     }
 
-    private fun onChangeStatus(status: MediaProjectionStatus) {
-        when (status) {
+    private fun onChangeStatus(statusData: MediaProjectionStatusData) {
+        when (statusData.status) {
             MediaProjectionStatus.OnInitialized -> {
                 isStart = false
                 startMediaProjection()
@@ -72,28 +69,51 @@ class MediaProjectionActivity : AppCompatActivity() {
             MediaProjectionStatus.OnStop -> {
                 isStart = false
                 binding.fab.setImageResource(android.R.drawable.ic_media_play)
+                stopService()
             }
             MediaProjectionStatus.OnFail -> {
                 isStart = false
                 binding.fab.setImageResource(android.R.drawable.ic_media_play)
                 Snackbar.make(binding.fab, R.string.media_projection_fail, Snackbar.LENGTH_SHORT).show()
+                stopService()
             }
             MediaProjectionStatus.OnReject -> {
                 isStart = false
                 Snackbar.make(binding.fab, R.string.media_projection_reject, Snackbar.LENGTH_SHORT).show()
+                stopService()
             }
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        MediaProjectionAccessServiceBroadcastReceiver.register(this, ::onChangeStatus)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopService()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        MediaProjectionAccessServiceBroadcastReceiver.unregister(this)
+    }
+
     private fun mediaProjectionInit() {
-        runService(MediaProjectionAccessService.newService(this, messenger))
+        runService(MediaProjectionAccessService.newService(this))
     }
 
     private fun startMediaProjection() {
-        runService(MediaProjectionAccessService.newStartService(this, contentMainBinding.surfaceView.holder.surface))
+        runService(MediaProjectionAccessService.newStartMediaProjection(this, contentMainBinding.surfaceView.holder.surface))
     }
 
     private fun stopMediaProjection() {
+        runService(MediaProjectionAccessService.newStopMediaProjection(this))
+    }
+
+    private fun stopService() {
         runService(MediaProjectionAccessService.newStopService(this))
     }
 

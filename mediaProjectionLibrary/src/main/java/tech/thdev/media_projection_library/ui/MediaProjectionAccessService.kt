@@ -8,22 +8,31 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
 import android.media.projection.MediaProjection
 import android.media.projection.MediaProjectionManager
 import android.os.Build
 import android.os.IBinder
-import android.os.Message
-import android.os.Messenger
 import android.view.Surface
+import tech.thdev.media_projection_library.MediaProjectionStatus
+import tech.thdev.media_projection_library.MediaProjectionStatusData
 import tech.thdev.media_projection_library.R
-import tech.thdev.media_projection_library.constant.MediaProjectionStatus
-import tech.thdev.media_projection_library.constant.VALUE_PROJECTION_NAME
-import tech.thdev.media_projection_library.constant.VALUE_SIZE_HEIGHT
-import tech.thdev.media_projection_library.constant.VALUE_SIZE_WIDTH
-
+import tech.thdev.media_projection_library.constant.ACTION_INIT
+import tech.thdev.media_projection_library.constant.ACTION_PERMISSION_INIT
+import tech.thdev.media_projection_library.constant.ACTION_REJECT
+import tech.thdev.media_projection_library.constant.ACTION_SELF_STOP
+import tech.thdev.media_projection_library.constant.ACTION_START
+import tech.thdev.media_projection_library.constant.ACTION_STOP
+import tech.thdev.media_projection_library.constant.DEFAULT_VALUE_PROJECTION_NAME
+import tech.thdev.media_projection_library.constant.DEFAULT_VALUE_SIZE_HEIGHT
+import tech.thdev.media_projection_library.constant.DEFAULT_VALUE_SIZE_WIDTH
+import tech.thdev.media_projection_library.constant.EXTRA_PROJECTION_NAME
+import tech.thdev.media_projection_library.constant.EXTRA_REQUEST_DATA
+import tech.thdev.media_projection_library.constant.EXTRA_RESULT_CODE
+import tech.thdev.media_projection_library.constant.EXTRA_SIZE_HEIGHT
+import tech.thdev.media_projection_library.constant.EXTRA_SIZE_WIDTH
+import tech.thdev.media_projection_library.constant.EXTRA_SURFACE
 
 open class MediaProjectionAccessService : Service() {
 
@@ -33,56 +42,47 @@ open class MediaProjectionAccessService : Service() {
     companion object {
         private const val FOREGROUND_SERVICE_ID = 1000
 
-        private const val ACTION_INIT = "action_init"
-        internal const val ACTION_PERMISSION_INIT = "action_permission_init"
-        private const val ACTION_START = "action_start"
-        private const val ACTION_STOP = "action_stop"
-        internal const val ACTION_REJECT = "action_reject"
-
-        const val EXTRA_RESULT_CODE = "result_code"
-        const val EXTRA_REQUEST_DATA = "request_data"
-        private const val EXTRA_SURFACE = "surface"
-        private const val EXTRA_INTENT_MESSENGER = "messenger"
-
         private const val CHANNEL_ID = "MediaProjectionService"
 
-        private fun newService(context: Context): Intent =
-            Intent(context, MediaProjectionAccessService::class.java)
-
         fun newService(
-            context: Context,
-            messenger: Messenger
+            context: Context
         ): Intent =
-            newService(context).apply {
-                putExtra(EXTRA_INTENT_MESSENGER, messenger)
+            Intent(context, MediaProjectionAccessService::class.java).apply {
                 action = ACTION_INIT
             }
 
-        fun newStartService(
+        fun newStartMediaProjection(
             context: Context,
-            surface: Surface
+            surface: Surface,
+            projectionName: String = DEFAULT_VALUE_PROJECTION_NAME,
+            width: Int = DEFAULT_VALUE_SIZE_WIDTH,
+            height: Int = DEFAULT_VALUE_SIZE_HEIGHT
         ): Intent =
             newService(context).apply {
                 putExtra(EXTRA_SURFACE, surface)
+                putExtra(EXTRA_PROJECTION_NAME, projectionName)
+                putExtra(EXTRA_SIZE_WIDTH, width)
+                putExtra(EXTRA_SIZE_HEIGHT, height)
                 action = ACTION_START
+            }
+
+        fun newStopMediaProjection(
+            context: Context
+        ): Intent =
+            newService(context).apply {
+                action = ACTION_STOP
             }
 
         fun newStopService(
             context: Context
         ): Intent =
             newService(context).apply {
-                action = ACTION_STOP
+                action = ACTION_SELF_STOP
             }
     }
 
-    private var messenger: Messenger? = null
-
     private val mediaProjectionManager: MediaProjectionManager by lazy {
         getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager
-    }
-
-    private val broadcastReceiver: MediaProjectionBroadcastReceiver by lazy {
-        MediaProjectionBroadcastReceiver(::action)
     }
 
     override fun onCreate() {
@@ -122,6 +122,7 @@ open class MediaProjectionAccessService : Service() {
             ACTION_REJECT -> rejectMediaProjection()
             ACTION_START -> startMediaProjection(intent)
             ACTION_STOP -> stopMediaProjection()
+            ACTION_SELF_STOP -> stopSelf()
         }
     }
 
@@ -132,20 +133,16 @@ open class MediaProjectionAccessService : Service() {
     }
 
     private fun getPermission(intent: Intent? = null) {
-        messenger = intent?.getParcelableExtra(EXTRA_INTENT_MESSENGER)
         initRegisterReceiver()
         startActivity(MediaProjectionAccessActivity.newInstance(this))
     }
 
     private fun initRegisterReceiver() {
-        registerReceiver(
-            broadcastReceiver,
-            IntentFilter(MediaProjectionBroadcastReceiver.INTENT_FILTER_MEDIA_PROJECTION)
-        )
+        MediaProjectionAccessBroadcastReceiver.register(this, ::action)
     }
 
     private fun unregisterReceiver() {
-        unregisterReceiver(broadcastReceiver)
+        MediaProjectionAccessBroadcastReceiver.unregister(this)
     }
 
     private fun permissionInitMediaProjection(intent: Intent) {
@@ -156,28 +153,31 @@ open class MediaProjectionAccessService : Service() {
         mediaProjection.registerCallback(object : MediaProjection.Callback() {
             override fun onStop() {
                 super.onStop()
-                sendMessage(MediaProjectionStatus.OnStop)
+                sendEvent(MediaProjectionStatus.OnStop)
             }
         }, null)
-        sendMessage(MediaProjectionStatus.OnInitialized)
+        sendEvent(MediaProjectionStatus.OnInitialized)
     }
 
     private fun rejectMediaProjection() {
         unregisterReceiver()
-        sendMessage(MediaProjectionStatus.OnReject)
+        sendEvent(MediaProjectionStatus.OnReject)
     }
 
     private fun startMediaProjection(intent: Intent) {
         startMediaProjection(
-            intent.getParcelableExtra(EXTRA_SURFACE) as Surface
+            surface = intent.getParcelableExtra(EXTRA_SURFACE) as Surface,
+            projectionName = intent.getStringExtra(EXTRA_PROJECTION_NAME) ?: DEFAULT_VALUE_PROJECTION_NAME,
+            width = intent.getIntExtra(EXTRA_SIZE_WIDTH, DEFAULT_VALUE_SIZE_WIDTH),
+            height = intent.getIntExtra(EXTRA_SIZE_HEIGHT, DEFAULT_VALUE_SIZE_HEIGHT)
         )
     }
 
     fun startMediaProjection(
         surface: Surface,
-        projectionName: String = VALUE_PROJECTION_NAME,
-        width: Int = VALUE_SIZE_WIDTH,
-        height: Int = VALUE_SIZE_HEIGHT
+        projectionName: String = DEFAULT_VALUE_PROJECTION_NAME,
+        width: Int = DEFAULT_VALUE_SIZE_WIDTH,
+        height: Int = DEFAULT_VALUE_SIZE_HEIGHT
     ) {
         if (::mediaProjection.isInitialized) {
             virtualDisplay = mediaProjection.createVirtualDisplay(
@@ -190,9 +190,9 @@ open class MediaProjectionAccessService : Service() {
                 null,
                 null
             )
-            sendMessage(MediaProjectionStatus.OnStarted)
+            sendEvent(MediaProjectionStatus.OnStarted)
         } else {
-            sendMessage(MediaProjectionStatus.OnFail)
+            sendEvent(MediaProjectionStatus.OnFail)
         }
     }
 
@@ -221,18 +221,13 @@ open class MediaProjectionAccessService : Service() {
         }
     }
 
-    private fun sendMessage(status: MediaProjectionStatus) {
-        try {
-            val message = Message.obtain().also { it.obj = status }
-            messenger?.send(message)
-        } catch (e: RuntimeException) {
-            e.printStackTrace()
-        }
-
-        onChangeStatus(status)
+    private fun sendEvent(status: MediaProjectionStatus) {
+        val data = MediaProjectionStatusData(status)
+        sendBroadcast(MediaProjectionAccessServiceBroadcastReceiver.newInstance(data))
+        onChangeStatus(data)
     }
 
-    open fun onChangeStatus(status: MediaProjectionStatus) {
+    open fun onChangeStatus(statusData: MediaProjectionStatusData) {
         // Do nothing
     }
 
