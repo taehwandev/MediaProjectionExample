@@ -3,12 +3,12 @@
 
 Maybe MVP pattern MediaProjection Example.
 
-- Develop Android studio 3.6.2
+- Develop Android studio 3.6.3
 
 ## Requirements
 
-- Target Sdk Version : 28
-- Min Sdk Version : 21
+- Target Sdk Version : 29
+- Min Sdk Version : 24
 
 
 ## Blog
@@ -18,7 +18,6 @@ Maybe MVP pattern MediaProjection Example.
 ## Use Library
 - [PlayPauseButton](https://github.com/recruit-lifestyle/PlayPauseButton)
 - [MediaProjection](http://developer.android.com/reference/android/media/projection/package-summary.html)
-- [TextureView](http://developer.android.com/reference/android/view/TextureView.html)
 - [SurfaceView](http://developer.android.com/reference/android/view/SurfaceView.html)
 
 
