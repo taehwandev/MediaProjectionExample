@@ -1,67 +1,107 @@
 package tech.thdev.mediaprojectionexample.ui.mediaprojection
 
+import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import android.os.Messenger
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_media_projection.*
-import kotlinx.android.synthetic.main.content_media_projection.*
+import tech.thdev.media_projection_library.constant.MediaProjectionStatus
+import tech.thdev.media_projection_library.ui.MediaProjectionAccessService
 import tech.thdev.mediaprojectionexample.R
-import tech.thdev.mediaprojectionexample.base.ui.BaseMediaProjectionActivity
-import tech.thdev.mediaprojectionexample.surface.SurfaceViewHolder
+import tech.thdev.mediaprojectionexample.databinding.ActivityMediaProjectionBinding
+import tech.thdev.mediaprojectionexample.databinding.ContentMediaProjectionBinding
+import tech.thdev.mediaprojectionexample.ui.surface.SurfaceViewHolder
 
 /**
  * Created by Tae-hwan on 4/8/16.
  *
  * MediaProjection example.
  */
-class MediaProjectionActivity : BaseMediaProjectionActivity(
-    layoutRes = R.layout.activity_media_projection
-) {
+class MediaProjectionActivity : AppCompatActivity() {
 
-    private val viewModel: MediaProjectionViewModel by lazy {
-        ViewModelProvider(viewModelStore, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return MediaProjectionViewModel() as T
-            }
-        }).get(MediaProjectionViewModel::class.java)
+    companion object {
+
+        fun newInstance(context: Context): Intent =
+            Intent(context, MediaProjectionActivity::class.java)
     }
 
     private val surfaceViewHolder: SurfaceViewHolder by lazy {
         SurfaceViewHolder()
     }
 
+    private val messenger: Messenger by lazy {
+        Messenger(MediaProjectionHandler(::onChangeStatus))
+    }
+
+    private var isStart = false
+
+    private lateinit var binding: ActivityMediaProjectionBinding
+    private lateinit var contentMainBinding: ContentMediaProjectionBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMediaProjectionBinding.inflate(layoutInflater)
+        contentMainBinding = ContentMediaProjectionBinding.inflate(layoutInflater, binding.root, true)
+        setContentView(binding.root)
 
-        surface_view.holder.addCallback(surfaceViewHolder)
+        setSupportActionBar(binding.toolbar)
 
-        fab.setOnClickListener {
-            viewModel.restartMediaProjection()
+        contentMainBinding.surfaceView.holder.addCallback(surfaceViewHolder)
+
+        binding.fab.setOnClickListener {
+            if (isStart) {
+                stopMediaProjection()
+            } else {
+                mediaProjectionInit()
+            }
         }
+    }
 
-        viewModel.init.observe(this, Observer {
-            mediaProjectionInit(viewModel::onMediaProjectionListener)
-        })
-        viewModel.stop.observe(this, Observer {
-            stopMediaProjection()
-        })
+    private fun onChangeStatus(status: MediaProjectionStatus) {
+        when (status) {
+            MediaProjectionStatus.OnInitialized -> {
+                isStart = false
+                startMediaProjection()
+            }
+            MediaProjectionStatus.OnStarted -> {
+                isStart = true
+                binding.fab.setImageResource(android.R.drawable.ic_media_pause)
+            }
+            MediaProjectionStatus.OnStop -> {
+                isStart = false
+                binding.fab.setImageResource(android.R.drawable.ic_media_play)
+            }
+            MediaProjectionStatus.OnFail -> {
+                isStart = false
+                binding.fab.setImageResource(android.R.drawable.ic_media_play)
+                Snackbar.make(binding.fab, R.string.media_projection_fail, Snackbar.LENGTH_SHORT).show()
+            }
+            MediaProjectionStatus.OnReject -> {
+                isStart = false
+                Snackbar.make(binding.fab, R.string.media_projection_reject, Snackbar.LENGTH_SHORT).show()
+            }
+        }
+    }
 
-        viewModel.statusInitialize.observe(this, Observer {
-            startMediaProjection(surface_view.holder.surface)
-        })
-        viewModel.statusStarted.observe(this, Observer {
-            fab.setImageResource(android.R.drawable.ic_media_pause)
-        })
-        viewModel.statusStop.observe(this, Observer {
-            fab.setImageResource(android.R.drawable.ic_media_play)
-        })
-        viewModel.statusFail.observe(this, Observer {
-            Snackbar.make(fab, R.string.media_projection_fail, Snackbar.LENGTH_SHORT).show()
-        })
-        viewModel.statusReject.observe(this, Observer {
-            Snackbar.make(fab, R.string.media_projection_reject, Snackbar.LENGTH_SHORT).show()
-        })
+    private fun mediaProjectionInit() {
+        runService(MediaProjectionAccessService.newService(this, messenger))
+    }
+
+    private fun startMediaProjection() {
+        runService(MediaProjectionAccessService.newStartService(this, contentMainBinding.surfaceView.holder.surface))
+    }
+
+    private fun stopMediaProjection() {
+        runService(MediaProjectionAccessService.newStopService(this))
+    }
+
+    private fun runService(service: Intent) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(service)
+        } else {
+            startService(service)
+        }
     }
 }

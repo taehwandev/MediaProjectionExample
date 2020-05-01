@@ -8,4 +8,7 @@
     <string name="media_projection_stopped">Stopped mediaProjection</string>
     <string name="media_projection_reject">Reject mediaProjection</string>
     <string name="media_projection_fail">Fail mediaProjection</string>
+
+    <string name="reject_dialog_title">Please</string>
+    <string name="reject_dialog_message">Please grant permission</string>
 </resources>

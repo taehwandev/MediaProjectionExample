@@ -1,4 +1,4 @@
-package tech.thdev.mediaprojectionexample.service
+package tech.thdev.mediaprojectionexample.ui.service
 
 import android.view.MotionEvent
 import android.view.View

@@ -34,5 +34,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "androidx.appcompat:appcompat:$appcompatVersion"
+    implementation "androidx.activity:activity:$activityVersion"
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycleExtensions"
 }

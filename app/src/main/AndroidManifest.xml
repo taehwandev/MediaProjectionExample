@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="tech.thdev.mediaprojectionexample">
 
 
@@ -29,14 +28,9 @@
             android:label="@string/start_media_projection_activity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity
-            android:name=".ui.mediaprojection.TransparentMediaProjectionActivity"
-            android:launchMode="singleInstance"
-            android:theme="@style/Theme.Transparent" />
-
-        <service android:name=".service.VideoViewService"
-            android:foregroundServiceType="mediaProjection"
-            tools:targetApi="q" />
+        <service
+            android:name="tech.thdev.mediaprojectionexample.ui.service.VideoViewService"
+            android:foregroundServiceType="mediaProjection" />
     </application>
 
 </manifest>

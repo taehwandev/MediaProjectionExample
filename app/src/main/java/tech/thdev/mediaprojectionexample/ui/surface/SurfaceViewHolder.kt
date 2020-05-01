@@ -1,6 +1,5 @@
-package tech.thdev.mediaprojectionexample.surface
+package tech.thdev.mediaprojectionexample.ui.surface
 
-import android.view.Surface
 import android.view.SurfaceHolder
 
 class SurfaceViewHolder : SurfaceHolder.Callback2 {
