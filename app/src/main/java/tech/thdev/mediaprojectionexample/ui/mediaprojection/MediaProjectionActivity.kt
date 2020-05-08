@@ -85,24 +85,9 @@ class MediaProjectionActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-
-        MediaProjectionAccessServiceBroadcastReceiver.register(this, ::onChangeStatus)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        stopService()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        MediaProjectionAccessServiceBroadcastReceiver.unregister(this)
-    }
-
     private fun mediaProjectionInit() {
         runService(MediaProjectionAccessService.newService(this))
+        MediaProjectionAccessServiceBroadcastReceiver.register(this, ::onChangeStatus)
     }
 
     private fun startMediaProjection() {
@@ -115,6 +100,7 @@ class MediaProjectionActivity : AppCompatActivity() {
 
     private fun stopService() {
         runService(MediaProjectionAccessService.newStopService(this))
+        MediaProjectionAccessServiceBroadcastReceiver.unregister(this)
     }
 
     private fun runService(service: Intent) {

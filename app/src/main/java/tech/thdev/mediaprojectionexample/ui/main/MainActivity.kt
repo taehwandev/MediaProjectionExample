@@ -24,7 +24,11 @@ import tech.thdev.mediaprojectionexample.ui.service.VideoViewService
 class MainActivity : AppCompatActivity() {
 
     private val canOverlay = registerForActivityResult(OverlayActivityResultContract()) {
-        if (it) {
+        runService()
+    }
+
+    private fun runService() {
+        if (Settings.canDrawOverlays(this)) {
             startService()
         } else {
             showRejectDialog()
@@ -40,11 +44,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         contentMainBinding.btnStartMediaProjectionService.setOnClickListener {
-            if (Settings.canDrawOverlays(this)) {
-                startService()
-            } else {
-                showRejectDialog()
-            }
+            runService()
         }
 
         contentMainBinding.btnStartMediaProjectionActivity.setOnClickListener {
@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
                 canOverlay.launch("package:$packageName")
             }
             .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun startService() {
