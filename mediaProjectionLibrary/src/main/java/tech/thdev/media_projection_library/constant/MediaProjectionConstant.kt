@@ -6,9 +6,6 @@ package tech.thdev.media_projection_library.constant
  */
 
 internal const val DEFAULT_VALUE_PROJECTION_NAME = "projection-name"
-internal const val DEFAULT_VALUE_SIZE_WIDTH = 1080
-internal const val DEFAULT_VALUE_SIZE_HEIGHT = 1920
-
 
 internal const val ACTION_INIT = "action_init"
 internal const val ACTION_PERMISSION_INIT = "action_permission_init"

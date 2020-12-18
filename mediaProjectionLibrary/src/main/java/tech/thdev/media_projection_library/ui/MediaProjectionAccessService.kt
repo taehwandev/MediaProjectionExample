@@ -25,14 +25,13 @@ import tech.thdev.media_projection_library.constant.ACTION_SELF_STOP
 import tech.thdev.media_projection_library.constant.ACTION_START
 import tech.thdev.media_projection_library.constant.ACTION_STOP
 import tech.thdev.media_projection_library.constant.DEFAULT_VALUE_PROJECTION_NAME
-import tech.thdev.media_projection_library.constant.DEFAULT_VALUE_SIZE_HEIGHT
-import tech.thdev.media_projection_library.constant.DEFAULT_VALUE_SIZE_WIDTH
 import tech.thdev.media_projection_library.constant.EXTRA_PROJECTION_NAME
 import tech.thdev.media_projection_library.constant.EXTRA_REQUEST_DATA
 import tech.thdev.media_projection_library.constant.EXTRA_RESULT_CODE
 import tech.thdev.media_projection_library.constant.EXTRA_SIZE_HEIGHT
 import tech.thdev.media_projection_library.constant.EXTRA_SIZE_WIDTH
 import tech.thdev.media_projection_library.constant.EXTRA_SURFACE
+import tech.thdev.media_projection_library.util.DeviceSize
 
 open class MediaProjectionAccessService : Service() {
 
@@ -52,11 +51,11 @@ open class MediaProjectionAccessService : Service() {
             }
 
         fun newStartMediaProjection(
-            context: Context,
-            surface: Surface,
-            projectionName: String = DEFAULT_VALUE_PROJECTION_NAME,
-            width: Int = DEFAULT_VALUE_SIZE_WIDTH,
-            height: Int = DEFAULT_VALUE_SIZE_HEIGHT
+                context: Context,
+                surface: Surface,
+                projectionName: String = DEFAULT_VALUE_PROJECTION_NAME,
+                width: Int = DeviceSize(context).size.width,
+                height: Int = DeviceSize(context).size.height
         ): Intent =
             newService(context).apply {
                 putExtra(EXTRA_SURFACE, surface)
@@ -168,16 +167,16 @@ open class MediaProjectionAccessService : Service() {
         startMediaProjection(
             surface = intent.getParcelableExtra(EXTRA_SURFACE) as Surface,
             projectionName = intent.getStringExtra(EXTRA_PROJECTION_NAME) ?: DEFAULT_VALUE_PROJECTION_NAME,
-            width = intent.getIntExtra(EXTRA_SIZE_WIDTH, DEFAULT_VALUE_SIZE_WIDTH),
-            height = intent.getIntExtra(EXTRA_SIZE_HEIGHT, DEFAULT_VALUE_SIZE_HEIGHT)
+            width = intent.getIntExtra(EXTRA_SIZE_WIDTH, DeviceSize(this).size.width),
+            height = intent.getIntExtra(EXTRA_SIZE_HEIGHT, DeviceSize(this).size.height)
         )
     }
 
     fun startMediaProjection(
         surface: Surface,
         projectionName: String = DEFAULT_VALUE_PROJECTION_NAME,
-        width: Int = DEFAULT_VALUE_SIZE_WIDTH,
-        height: Int = DEFAULT_VALUE_SIZE_HEIGHT
+        width: Int = DeviceSize(this).size.width,
+        height: Int = DeviceSize(this).size.height
     ) {
         if (::mediaProjection.isInitialized) {
             virtualDisplay = mediaProjection.createVirtualDisplay(
