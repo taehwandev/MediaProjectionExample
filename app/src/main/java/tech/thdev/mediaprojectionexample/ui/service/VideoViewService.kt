@@ -1,12 +1,15 @@
 package tech.thdev.mediaprojectionexample.ui.service
 
 import android.annotation.SuppressLint
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
+import android.util.DisplayMetrics
+import android.util.Size
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
@@ -38,6 +41,14 @@ class VideoViewService : MediaProjectionAccessService() {
 
     private val surfaceViewHolder: SurfaceViewHolder by lazy {
         SurfaceViewHolder()
+    }
+
+    private val deviceSize: Size by lazy {
+        val dm = DisplayMetrics()
+        val display = (getSystemService(Service.WINDOW_SERVICE) as WindowManager).defaultDisplay
+        display.getMetrics(dm)
+
+        Size(dm.widthPixels, dm.heightPixels)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -119,7 +130,11 @@ class VideoViewService : MediaProjectionAccessService() {
 
         when (statusData.status) {
             MediaProjectionStatus.OnInitialized -> {
-                startMediaProjection(windowBinding.surfaceView.holder.surface)
+                startMediaProjection(
+                    surface = windowBinding.surfaceView.holder.surface,
+                    width = deviceSize.width,
+                    height = deviceSize.height
+                )
             }
             MediaProjectionStatus.OnStarted -> {
                 setPlayed(true)

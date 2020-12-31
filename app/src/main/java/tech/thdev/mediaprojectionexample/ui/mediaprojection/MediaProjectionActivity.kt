@@ -1,9 +1,13 @@
 package tech.thdev.mediaprojectionexample.ui.mediaprojection
 
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.Size
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import tech.thdev.media_projection_library.MediaProjectionStatus
@@ -36,6 +40,14 @@ class MediaProjectionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMediaProjectionBinding
     private lateinit var contentMainBinding: ContentMediaProjectionBinding
+
+    private val deviceSize: Size by lazy {
+        val dm = DisplayMetrics()
+        val display = (getSystemService(Service.WINDOW_SERVICE) as WindowManager).defaultDisplay
+        display.getMetrics(dm)
+
+        Size(dm.widthPixels, dm.heightPixels)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +103,12 @@ class MediaProjectionActivity : AppCompatActivity() {
     }
 
     private fun startMediaProjection() {
-        runService(MediaProjectionAccessService.newStartMediaProjection(this, contentMainBinding.surfaceView.holder.surface))
+        runService(MediaProjectionAccessService.newStartMediaProjection(
+            context = this,
+            surface = contentMainBinding.surfaceView.holder.surface,
+            width = deviceSize.width,
+            height = deviceSize.height
+        ))
     }
 
     private fun stopMediaProjection() {
