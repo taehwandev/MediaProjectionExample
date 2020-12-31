@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Size
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import tech.thdev.media_projection_library.MediaProjectionStatus
@@ -38,10 +37,6 @@ class MediaProjectionActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMediaProjectionBinding
     private lateinit var contentMainBinding: ContentMediaProjectionBinding
-
-    private val deviceSize: Size by lazy {
-        DeviceUtil.getDeviceSize(this)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,6 +92,7 @@ class MediaProjectionActivity : AppCompatActivity() {
     }
 
     private fun startMediaProjection() {
+        val deviceSize = DeviceUtil.getDeviceSize(this)
         runService(MediaProjectionAccessService.newStartMediaProjection(
             context = this,
             surface = contentMainBinding.surfaceView.holder.surface,

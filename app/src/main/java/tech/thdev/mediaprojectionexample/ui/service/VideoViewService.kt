@@ -7,7 +7,6 @@ import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
-import android.util.Size
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
@@ -40,10 +39,6 @@ class VideoViewService : MediaProjectionAccessService() {
 
     private val surfaceViewHolder: SurfaceViewHolder by lazy {
         SurfaceViewHolder()
-    }
-
-    private val deviceSize: Size by lazy {
-        DeviceUtil.getDeviceSize(this)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -125,6 +120,7 @@ class VideoViewService : MediaProjectionAccessService() {
 
         when (statusData.status) {
             MediaProjectionStatus.OnInitialized -> {
+                val deviceSize = DeviceUtil.getDeviceSize(this)
                 startMediaProjection(
                     surface = windowBinding.surfaceView.holder.surface,
                     width = deviceSize.width,
