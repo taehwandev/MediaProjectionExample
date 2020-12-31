@@ -1,14 +1,12 @@
 package tech.thdev.mediaprojectionexample.ui.service
 
 import android.annotation.SuppressLint
-import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
-import android.util.DisplayMetrics
 import android.util.Size
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -20,6 +18,7 @@ import tech.thdev.media_projection_library.ui.MediaProjectionAccessService
 import tech.thdev.mediaprojectionexample.R
 import tech.thdev.mediaprojectionexample.databinding.WindowVideoViewBinding
 import tech.thdev.mediaprojectionexample.ui.surface.SurfaceViewHolder
+import tech.thdev.mediaprojectionexample.ui.util.DeviceUtil
 
 /**
  * Created by Tae-hwan on 4/8/16.
@@ -44,11 +43,7 @@ class VideoViewService : MediaProjectionAccessService() {
     }
 
     private val deviceSize: Size by lazy {
-        val dm = DisplayMetrics()
-        val display = (getSystemService(Service.WINDOW_SERVICE) as WindowManager).defaultDisplay
-        display.getMetrics(dm)
-
-        Size(dm.widthPixels, dm.heightPixels)
+        DeviceUtil.getDeviceSize(this)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
