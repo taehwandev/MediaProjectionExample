@@ -17,6 +17,7 @@ import tech.thdev.media_projection_library.ui.MediaProjectionAccessService
 import tech.thdev.mediaprojectionexample.R
 import tech.thdev.mediaprojectionexample.databinding.WindowVideoViewBinding
 import tech.thdev.mediaprojectionexample.ui.surface.SurfaceViewHolder
+import tech.thdev.mediaprojectionexample.ui.util.DeviceUtil
 
 /**
  * Created by Tae-hwan on 4/8/16.
@@ -119,7 +120,12 @@ class VideoViewService : MediaProjectionAccessService() {
 
         when (statusData.status) {
             MediaProjectionStatus.OnInitialized -> {
-                startMediaProjection(windowBinding.surfaceView.holder.surface)
+                val deviceSize = DeviceUtil.getDeviceSize(this)
+                startMediaProjection(
+                    surface = windowBinding.surfaceView.holder.surface,
+                    width = deviceSize.width,
+                    height = deviceSize.height
+                )
             }
             MediaProjectionStatus.OnStarted -> {
                 setPlayed(true)

@@ -14,6 +14,7 @@ import tech.thdev.mediaprojectionexample.R
 import tech.thdev.mediaprojectionexample.databinding.ActivityMediaProjectionBinding
 import tech.thdev.mediaprojectionexample.databinding.ContentMediaProjectionBinding
 import tech.thdev.mediaprojectionexample.ui.surface.SurfaceViewHolder
+import tech.thdev.mediaprojectionexample.ui.util.DeviceUtil
 
 /**
  * Created by Tae-hwan on 4/8/16.
@@ -91,7 +92,13 @@ class MediaProjectionActivity : AppCompatActivity() {
     }
 
     private fun startMediaProjection() {
-        runService(MediaProjectionAccessService.newStartMediaProjection(this, contentMainBinding.surfaceView.holder.surface))
+        val deviceSize = DeviceUtil.getDeviceSize(this)
+        runService(MediaProjectionAccessService.newStartMediaProjection(
+            context = this,
+            surface = contentMainBinding.surfaceView.holder.surface,
+            width = deviceSize.width,
+            height = deviceSize.height
+        ))
     }
 
     private fun stopMediaProjection() {
